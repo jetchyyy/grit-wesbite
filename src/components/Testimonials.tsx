@@ -73,8 +73,7 @@ export default function Testimonials() {
           {testimonials.map((testimonial, idx) => (
             <div 
               key={idx} 
-              className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-8 hover:border-[#BF9B30]/60 hover:scale-105 hover:shadow-2xl hover:shadow-[#BF9B30]/20 transition-all duration-500"
-              style={{ animationDelay: `${idx * 150}ms` }}
+              className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-8 hover:border-[#BF9B30]/60 hover:scale-105 hover:shadow-2xl hover:shadow-[#BF9B30]/20 transition-all duration-300 will-change-transform"
             >
               {/* Quote Icon */}
               <div className="flex justify-between items-start mb-6">
@@ -97,8 +96,10 @@ export default function Testimonials() {
                 <div className="relative">
                   <img 
                     src={testimonial.image} 
-                    alt={testimonial.name}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-[#BF9B30]/30 group-hover:border-[#BF9B30] transition-colors duration-300"
+                    alt={`${testimonial.name} - GRIT Fitness Gym member testimonial`}
+                    className="w-16 h-16 rounded-full object-cover border-2 border-[#BF9B30]/30 group-hover:border-[#BF9B30] transition-colors duration-200"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#BF9B30] rounded-full flex items-center justify-center">
                     <Trophy className="w-3 h-3 text-[#0A0A1F]" />
@@ -127,7 +128,7 @@ export default function Testimonials() {
               </div>
 
               {/* Hover accent */}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#BF9B30] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-b-2xl"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#BF9B30] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-b-2xl"></div>
             </div>
           ))}
         </div>
@@ -159,7 +160,7 @@ export default function Testimonials() {
           </p>
           <button
             onClick={handleOpenPaymentModal}
-            className="bg-[#BF9B30] text-[#0A0A1F] px-10 py-4 rounded-xl hover:bg-[#D8C08E] transition-all duration-300 font-bold text-lg shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50 hover:-translate-y-1"
+            className="bg-[#BF9B30] text-[#0A0A1F] px-10 py-4 rounded-xl hover:bg-[#D8C08E] transition-all duration-200 font-bold text-lg shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50 hover:-translate-y-1 will-change-transform"
           >
             Join GRIT Today
           </button>

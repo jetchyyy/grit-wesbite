@@ -113,12 +113,11 @@ export default function Pricing() {
             {plans.map((plan, idx) => (
               <div
                 key={idx}
-                className={`group relative rounded-2xl p-6 transition-all duration-500 hover:scale-105 ${
+                className={`group relative rounded-2xl p-6 transition-all duration-300 hover:scale-105 will-change-transform ${
                   plan.highlighted
                     ? 'bg-[#0A0A1F]/80 backdrop-blur-xl border-2 border-[#BF9B30] shadow-2xl shadow-[#BF9B30]/20'
                     : 'bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 hover:border-[#BF9B30]/60 hover:shadow-xl hover:shadow-[#BF9B30]/10'
                 }`}
-                style={{ animationDelay: `${idx * 100}ms` }}
               >
                 {/* Badge */}
                 {plan.badge && (
@@ -154,7 +153,7 @@ export default function Pricing() {
                 {/* CTA Button */}
                 <button
                   onClick={() => handleGetStarted(plan)}
-                  className={`w-full py-3 rounded-xl font-bold mb-6 transition-all duration-300 ${
+                  className={`w-full py-3 rounded-xl font-bold mb-6 transition-all duration-200 will-change-[background-color,transform] ${
                     plan.highlighted
                       ? 'bg-[#BF9B30] text-[#0A0A1F] hover:bg-[#D8C08E] shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50'
                       : 'border-2 border-[#BF9B30] text-[#BF9B30] hover:bg-[#BF9B30] hover:text-[#0A0A1F] backdrop-blur-sm'

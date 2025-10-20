@@ -216,9 +216,6 @@ const ClassModal = memo(function ClassModal({ isOpen, onClose, classData }: Clas
             </div>
           </div>
         </div>
-
-        {/* Bottom accent */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#BF9B30] to-transparent"></div>
       </div>
     </div>
   );

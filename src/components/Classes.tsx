@@ -1,13 +1,92 @@
 import { Music, Dumbbell, Heart, Flame, Calendar, User } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, memo, useMemo } from 'react';
 import ClassModal from './ClassModal';
+
+// Memoized ClassCard component to prevent re-renders
+const ClassCard = memo(({ cls, idx, onClick }: any) => {
+  const Icon = cls.icon;
+  const gridClass = idx === 0 || idx === 1
+    ? 'md:col-span-3'
+    : idx === 2 || idx === 3 || idx === 4
+    ? 'md:col-span-2'
+    : 'md:col-span-6';
+
+  return (
+    <div
+      onClick={() => onClick(cls)}
+      className={`${gridClass} group relative overflow-hidden rounded-2xl bg-[#0A0A1F]/50 border border-[#BF9B30]/20 hover:border-[#BF9B30]/60 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#BF9B30]/10 cursor-pointer will-change-transform`}
+    >
+      {/* Background Image */}
+      <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-300">
+        <img
+          src={cls.image}
+          alt={`${cls.name} fitness class with instructor ${cls.instructor} at GRIT Fitness Gym Cebu`}
+          className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110 will-change-transform"
+          loading="lazy"
+          decoding="async"
+        />
+        <div className={`absolute inset-0 bg-gradient-to-br ${cls.color}`}></div>
+      </div>
+
+      {/* Content */}
+      <div className={`relative backdrop-blur-sm h-full flex flex-col justify-between ${idx === 5 ? 'p-10' : 'p-6'}`}>
+        <div>
+          {/* Icon */}
+          <div className={`mb-4 inline-flex items-center justify-center rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] group-hover:bg-[#BF9B30] transition-all duration-200 will-change-[background-color] ${idx === 5 ? 'w-16 h-16' : 'w-12 h-12'}`}>
+            <Icon className={`text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-200 ${idx === 5 ? 'w-8 h-8' : 'w-6 h-6'}`} />
+          </div>
+
+          {/* Class Name */}
+          <h3 className={`font-black text-white mb-3 group-hover:text-[#BF9B30] transition-colors duration-200 ${idx === 5 ? 'text-4xl' : 'text-2xl'}`}>
+            {cls.name}
+          </h3>
+
+          {/* Instructor */}
+          <div className="flex items-center gap-2 mb-3">
+            <User className="w-4 h-4 text-[#BF9B30]" />
+            <span className="text-[#D8C08E] font-medium">{cls.instructor}</span>
+          </div>
+
+          {/* Schedule */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-[#BF9B30]" />
+              <span className="text-white font-semibold text-sm">{cls.day}</span>
+            </div>
+            <div className="flex items-center gap-2 pl-6">
+              <span className="text-[#BF9B30] font-bold text-sm">{cls.time}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Hover CTA */}
+        <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <button className="text-[#BF9B30] font-semibold text-sm flex items-center gap-2 hover:gap-3 transition-all duration-200">
+            Book Now
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Accent line */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#BF9B30] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    </div>
+  );
+});
 
 export default function Classes() {
   const [selectedClass, setSelectedClass] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleClassClick = useCallback((classData: any) => {
-    setSelectedClass(classData);
+    // Use requestIdleCallback to defer non-critical work
+    requestIdleCallback(() => {
+      setSelectedClass(classData);
+    }, { timeout: 50 });
+    
+    // Open modal immediately for instant feedback
     setIsModalOpen(true);
   }, []);
 

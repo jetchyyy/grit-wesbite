@@ -1,5 +1,5 @@
 import { Award, Target, Heart, Zap } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, memo } from 'react';
 import CoachModal from './CoachModal';
 import PaymentModal from './PaymentModal';
 
@@ -11,6 +11,55 @@ interface Coach {
   icon: typeof Award;
   gallery?: string[];
 }
+
+// Memoized Coach Card component
+const CoachCard = memo(({ coach, idx, onClick }: { coach: Coach; idx: number; onClick: (coach: Coach) => void }) => {
+  const Icon = coach.icon;
+  
+  return (
+    <div
+      onClick={() => onClick(coach)}
+      className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl overflow-hidden hover:border-[#BF9B30]/60 hover:scale-105 hover:shadow-2xl hover:shadow-[#BF9B30]/20 transition-all duration-300 cursor-pointer will-change-transform"
+    >
+      {/* Image */}
+      <div className="relative h-64 overflow-hidden">
+        <img
+          src={coach.image}
+          alt={`${coach.name} - ${coach.specialty} coach at GRIT Fitness Gym Cebu`}
+          className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110 will-change-transform"
+          loading="lazy"
+          decoding="async"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A1F] via-[#0A0A1F]/50 to-transparent"></div>
+        
+        {/* Icon Badge */}
+        <div className="absolute top-4 right-4">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#BF9B30]/90 backdrop-blur-sm border border-[#BF9B30]">
+            <Icon className="w-6 h-6 text-[#0A0A1F]" />
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-6">
+        <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#BF9B30] transition-colors duration-200">
+          {coach.name}
+        </h3>
+        
+        <div className="inline-block bg-[#BF9B30]/20 border border-[#BF9B30] rounded-full px-3 py-1 mb-4">
+          <span className="text-[#BF9B30] font-semibold text-xs tracking-wide">{coach.specialty}</span>
+        </div>
+
+        <p className="text-[#D8C08E] text-sm leading-relaxed">
+          {coach.description}
+        </p>
+      </div>
+
+      {/* Hover accent */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#BF9B30] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    </div>
+  );
+});
 
 export default function Coaches() {
   const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
@@ -92,52 +141,9 @@ export default function Coaches() {
 
         {/* Coaches Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {coaches.map((coach, idx) => {
-            const Icon = coach.icon;
-            return (
-              <div
-                key={idx}
-                onClick={() => handleCoachClick(coach)}
-                className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl overflow-hidden hover:border-[#BF9B30]/60 hover:scale-105 hover:shadow-2xl hover:shadow-[#BF9B30]/20 transition-all duration-500 cursor-pointer"
-                style={{ animationDelay: `${idx * 100}ms` }}
-              >
-                {/* Image */}
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={coach.image}
-                    alt={coach.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A1F] via-[#0A0A1F]/50 to-transparent"></div>
-                  
-                  {/* Icon Badge */}
-                  <div className="absolute top-4 right-4">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#BF9B30]/90 backdrop-blur-sm border border-[#BF9B30]">
-                      <Icon className="w-6 h-6 text-[#0A0A1F]" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-2xl font-black text-white mb-2 group-hover:text-[#BF9B30] transition-colors duration-300">
-                    {coach.name}
-                  </h3>
-                  
-                  <div className="inline-block bg-[#BF9B30]/20 border border-[#BF9B30] rounded-full px-3 py-1 mb-4">
-                    <span className="text-[#BF9B30] font-semibold text-xs tracking-wide">{coach.specialty}</span>
-                  </div>
-
-                  <p className="text-[#D8C08E] text-sm leading-relaxed">
-                    {coach.description}
-                  </p>
-                </div>
-
-                {/* Hover accent */}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#BF9B30] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              </div>
-            );
-          })}
+          {coaches.map((coach, idx) => (
+            <CoachCard key={idx} coach={coach} idx={idx} onClick={handleCoachClick} />
+          ))}
         </div>
 
         {/* Bottom CTA */}

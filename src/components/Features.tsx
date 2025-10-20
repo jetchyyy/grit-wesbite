@@ -129,31 +129,33 @@ export default function Features() {
               <div 
                 key={idx}
                 onClick={() => handleFeatureClick(feature)}
-                className="group relative overflow-hidden rounded-2xl h-[400px] cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#BF9B30]/20"
+                className="group relative overflow-hidden rounded-2xl h-[400px] cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#BF9B30]/20 will-change-transform"
               >
                 {/* Background Image */}
                 <div className="absolute inset-0">
                   <img 
                     src={feature.image} 
                     alt={feature.alt}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110 will-change-transform"
+                    loading="lazy"
+                    decoding="async"
                   />
                   {/* Gradient Overlays */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A1F] via-[#0A0A1F]/80 to-transparent"></div>
-                  <div className="absolute inset-0 bg-[#0A0A1F]/40 group-hover:bg-[#0A0A1F]/30 transition-all duration-500"></div>
+                  <div className="absolute inset-0 bg-[#0A0A1F]/40 group-hover:bg-[#0A0A1F]/30 transition-all duration-300"></div>
                 </div>
 
                 {/* Content */}
                 <div className="relative h-full flex flex-col justify-end p-6 z-10">
                   {/* Icon with animated background */}
                   <div className="mb-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] backdrop-blur-sm group-hover:bg-[#BF9B30] transition-all duration-300">
-                      <Icon className="w-7 h-7 text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-300" />
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] backdrop-blur-sm group-hover:bg-[#BF9B30] transition-all duration-200 will-change-[background-color]">
+                      <Icon className="w-7 h-7 text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-200" />
                     </div>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-2xl font-black text-white mb-3 group-hover:text-[#BF9B30] transition-colors duration-300">
+                  <h3 className="text-2xl font-black text-white mb-3 group-hover:text-[#BF9B30] transition-colors duration-200">
                     {feature.title}
                   </h3>
 
