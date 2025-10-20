@@ -1,4 +1,4 @@
-import { X, Instagram, Award } from 'lucide-react';
+import { X, Instagram, Award, Facebook, Twitter } from 'lucide-react';
 import { useEffect, memo } from 'react';
 
 interface CoachModalProps {
@@ -11,6 +11,10 @@ interface CoachModalProps {
     description: string;
     image: string;
     gallery?: string[];
+    experience?: string;
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
   } | null;
 }
 
@@ -40,7 +44,20 @@ const CoachModal = memo(function CoachModal({ isOpen, onClose, onBookSession, co
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0A1F]/95 backdrop-blur-md">
-      <div className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[#0A0A1F]/95 backdrop-blur-xl border-2 border-[#BF9B30]/40 rounded-3xl shadow-2xl shadow-[#BF9B30]/20 scrollbar-thin scrollbar-thumb-[#BF9B30]/60 scrollbar-track-[#0A0A1F]/80">
+      <div className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[#0A0A1F]/95 backdrop-blur-xl border-2 border-[#BF9B30]/40 rounded-3xl shadow-2xl shadow-[#BF9B30]/20
+        [&::-webkit-scrollbar]:w-3
+        [&::-webkit-scrollbar-track]:bg-[#0A0A1F]/50
+        [&::-webkit-scrollbar-track]:rounded-full
+        [&::-webkit-scrollbar-track]:border
+        [&::-webkit-scrollbar-track]:border-[#BF9B30]/20
+        [&::-webkit-scrollbar-thumb]:bg-gradient-to-b
+        [&::-webkit-scrollbar-thumb]:from-[#BF9B30]
+        [&::-webkit-scrollbar-thumb]:to-[#D8C08E]
+        [&::-webkit-scrollbar-thumb]:rounded-full
+        [&::-webkit-scrollbar-thumb]:border-2
+        [&::-webkit-scrollbar-thumb]:border-[#0A0A1F]
+        hover:[&::-webkit-scrollbar-thumb]:from-[#D8C08E]
+        hover:[&::-webkit-scrollbar-thumb]:to-[#BF9B30]">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -73,9 +90,29 @@ const CoachModal = memo(function CoachModal({ isOpen, onClose, onBookSession, co
                 {coach.name}
               </h2>
 
-              <p className="text-[#D8C08E] text-lg leading-relaxed mb-6">
-                {coach.description}
-              </p>
+              {coach.description ? (
+                <div 
+                  className="text-[#D8C08E]/90 text-lg leading-[1.8] mb-6 break-words overflow-wrap-anywhere
+                    prose prose-invert prose-lg
+                    prose-p:text-[#D8C08E] prose-p:leading-[1.8] prose-p:mb-4 prose-p:break-words
+                    prose-headings:text-white prose-headings:font-bold prose-headings:mb-3 prose-headings:break-words
+                    prose-h3:text-xl prose-h4:text-lg
+                    prose-strong:text-white prose-strong:font-semibold
+                    prose-em:text-[#D8C08E] prose-em:italic
+                    prose-ul:text-[#D8C08E] prose-ul:space-y-2 prose-ul:my-4 prose-ul:list-inside
+                    prose-ol:text-[#D8C08E] prose-ol:space-y-2 prose-ol:my-4 prose-ol:list-inside
+                    prose-li:text-[#D8C08E] prose-li:leading-relaxed prose-li:break-words
+                    prose-a:text-[#BF9B30] prose-a:underline prose-a:hover:text-[#D8C08E] prose-a:break-words
+                    prose-pre:overflow-x-auto prose-pre:break-words prose-pre:whitespace-pre-wrap
+                    prose-code:break-words prose-code:whitespace-normal
+                    max-w-none w-full overflow-hidden"
+                  dangerouslySetInnerHTML={{ __html: coach.description }}
+                />
+              ) : (
+                <p className="text-[#D8C08E] text-lg leading-relaxed mb-6">
+                  Certified fitness professional dedicated to helping you achieve your health and fitness goals.
+                </p>
+              )}
 
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -83,20 +120,46 @@ const CoachModal = memo(function CoachModal({ isOpen, onClose, onBookSession, co
                     <Award className="w-6 h-6 text-[#BF9B30]" />
                   </div>
                   <div>
-                    <div className="text-white font-semibold">8+ Years Experience</div>
+                    <div className="text-white font-semibold">{coach.experience || '8+ Years Experience'}</div>
                     <div className="text-[#D8C08E] text-sm">Professional Certification</div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    <Instagram className="w-6 h-6 text-white" />
+                {coach.instagram && (
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                      <Instagram className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold">{coach.instagram}</div>
+                      <div className="text-[#D8C08E] text-sm">Follow on Instagram</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-white font-semibold">@{coach.name.toLowerCase().replace(' ', '')}</div>
-                    <div className="text-[#D8C08E] text-sm">Follow on Instagram</div>
+                )}
+
+                {coach.facebook && (
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
+                      <Facebook className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold">{coach.facebook}</div>
+                      <div className="text-[#D8C08E] text-sm">Follow on Facebook</div>
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {coach.twitter && (
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-400 to-sky-500 flex items-center justify-center">
+                      <Twitter className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold">{coach.twitter}</div>
+                      <div className="text-[#D8C08E] text-sm">Follow on Twitter</div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <button

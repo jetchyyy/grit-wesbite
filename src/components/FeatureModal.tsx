@@ -1,23 +1,32 @@
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Zap, Users, Trophy, Heart, Dumbbell, Target } from 'lucide-react';
 import { useState, useEffect, memo } from 'react';
 
 interface FeatureModalProps {
   isOpen: boolean;
   onClose: () => void;
   feature: {
-    icon: any;
+    iconName: string;
     title: string;
     description: string;
     image: string;
-    alt: string;
     fullDescription: string;
-    gallery: string[];
+    gallery?: string[];
     benefits: string[];
   } | null;
 }
 
 const FeatureModal = memo(function FeatureModal({ isOpen, onClose, feature }: FeatureModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Icon mapping
+  const iconMap: any = {
+    Zap,
+    Users,
+    Trophy,
+    Heart,
+    Dumbbell,
+    Target,
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -33,8 +42,9 @@ const FeatureModal = memo(function FeatureModal({ isOpen, onClose, feature }: Fe
 
   if (!isOpen || !feature) return null;
 
-  const Icon = feature.icon;
-  const allImages = [feature.image, ...feature.gallery];
+  const Icon = iconMap[feature.iconName] || Zap;
+  const gallery = feature.gallery || [];
+  const allImages = [feature.image, ...gallery].filter(img => img && img.trim() !== '');
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
@@ -53,7 +63,21 @@ const FeatureModal = memo(function FeatureModal({ isOpen, onClose, feature }: Fe
       ></div>
 
       {/* Modal Content */}
-  <div className="relative bg-[#0A0A1F] border-2 border-[#BF9B30]/40 rounded-3xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl shadow-[#BF9B30]/20 scrollbar-thin scrollbar-thumb-[#BF9B30]/60 scrollbar-track-[#0A0A1F]/80 scrollbar-corner-[#BF9B30]/30">
+  <div className="relative bg-[#0A0A1F] border-2 border-[#BF9B30]/40 rounded-3xl w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl shadow-[#BF9B30]/20
+    [&::-webkit-scrollbar]:w-3
+    [&::-webkit-scrollbar-track]:bg-[#0A0A1F]/50
+    [&::-webkit-scrollbar-track]:rounded-full
+    [&::-webkit-scrollbar-track]:border
+    [&::-webkit-scrollbar-track]:border-[#BF9B30]/20
+    [&::-webkit-scrollbar-thumb]:bg-gradient-to-b
+    [&::-webkit-scrollbar-thumb]:from-[#BF9B30]
+    [&::-webkit-scrollbar-thumb]:to-[#D8C08E]
+    [&::-webkit-scrollbar-thumb]:rounded-full
+    [&::-webkit-scrollbar-thumb]:border-2
+    [&::-webkit-scrollbar-thumb]:border-[#0A0A1F]
+    hover:[&::-webkit-scrollbar-thumb]:from-[#D8C08E]
+    hover:[&::-webkit-scrollbar-thumb]:to-[#BF9B30]
+    [&::-webkit-scrollbar-thumb]:transition-all">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -66,11 +90,13 @@ const FeatureModal = memo(function FeatureModal({ isOpen, onClose, feature }: Fe
         <div className="relative h-[400px] overflow-hidden rounded-t-3xl">
           {/* Main Image with Navigation */}
           <div className="relative h-full">
-            <img
-              src={allImages[currentImageIndex]}
-              alt={`${feature.title} - Image ${currentImageIndex + 1}`}
-              className="w-full h-full object-cover"
-            />
+            {allImages[currentImageIndex] && (
+              <img
+                src={allImages[currentImageIndex]}
+                alt={`${feature.title} - Image ${currentImageIndex + 1}`}
+                className="w-full h-full object-cover"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A1F] via-[#0A0A1F]/50 to-transparent"></div>
 
             {/* Image Navigation */}
@@ -114,15 +140,35 @@ const FeatureModal = memo(function FeatureModal({ isOpen, onClose, feature }: Fe
         <div className="p-8 md:p-12">
           {/* Description */}
           <div className="mb-10">
-            <h3 className="text-2xl font-bold text-[#BF9B30] mb-4">Overview</h3>
-            <p className="text-[#D8C08E] text-lg leading-relaxed">
-              {feature.fullDescription}
-            </p>
+            <h3 className="text-2xl font-bold text-[#BF9B30] mb-4 flex items-center gap-2">
+              <div className="w-1 h-8 bg-[#BF9B30] rounded-full"></div>
+              Overview
+            </h3>
+            <div 
+              className="text-[#D8C08E]/90 text-lg leading-[1.8] break-words overflow-wrap-anywhere
+                prose prose-invert prose-lg
+                prose-p:text-[#D8C08E] prose-p:leading-[1.8] prose-p:mb-4 prose-p:break-words
+                prose-headings:text-white prose-headings:font-bold prose-headings:mb-3 prose-headings:break-words
+                prose-h3:text-xl prose-h4:text-lg
+                prose-strong:text-white prose-strong:font-semibold
+                prose-em:text-[#D8C08E] prose-em:italic
+                prose-ul:text-[#D8C08E] prose-ul:space-y-2 prose-ul:my-4 prose-ul:list-inside
+                prose-ol:text-[#D8C08E] prose-ol:space-y-2 prose-ol:my-4 prose-ol:list-inside
+                prose-li:text-[#D8C08E] prose-li:leading-relaxed prose-li:break-words
+                prose-a:text-[#BF9B30] prose-a:underline prose-a:hover:text-[#D8C08E] prose-a:break-words
+                prose-pre:overflow-x-auto prose-pre:break-words prose-pre:whitespace-pre-wrap
+                prose-code:break-words prose-code:whitespace-normal
+                max-w-none w-full overflow-hidden"
+              dangerouslySetInnerHTML={{ __html: feature.fullDescription }}
+            />
           </div>
 
           {/* Benefits Grid */}
           <div className="mb-10">
-            <h3 className="text-2xl font-bold text-[#BF9B30] mb-6">Key Benefits</h3>
+            <h3 className="text-2xl font-bold text-[#BF9B30] mb-6 flex items-center gap-2">
+              <div className="w-1 h-8 bg-[#BF9B30] rounded-full"></div>
+              Key Benefits
+            </h3>
             <div className="grid md:grid-cols-2 gap-4">
               {feature.benefits.map((benefit, idx) => (
                 <div
@@ -153,27 +199,32 @@ const FeatureModal = memo(function FeatureModal({ isOpen, onClose, feature }: Fe
           {/* Gallery Thumbnails */}
           {allImages.length > 1 && (
             <div>
-              <h3 className="text-2xl font-bold text-[#BF9B30] mb-6">Gallery</h3>
+              <h3 className="text-2xl font-bold text-[#BF9B30] mb-6 flex items-center gap-2">
+                <div className="w-1 h-8 bg-[#BF9B30] rounded-full"></div>
+                Gallery
+              </h3>
               <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 {allImages.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentImageIndex(idx)}
-                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-300 ${
-                      currentImageIndex === idx
-                        ? 'border-[#BF9B30] scale-95'
-                        : 'border-[#BF9B30]/20 hover:border-[#BF9B30]/60'
-                    }`}
-                  >
-                    <img
-                      src={img}
-                      alt={`${feature.title} thumbnail ${idx + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    {currentImageIndex === idx && (
-                      <div className="absolute inset-0 bg-[#BF9B30]/20"></div>
-                    )}
-                  </button>
+                  img && (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentImageIndex(idx)}
+                      className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                        currentImageIndex === idx
+                          ? 'border-[#BF9B30] scale-95'
+                          : 'border-[#BF9B30]/20 hover:border-[#BF9B30]/60'
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt={`${feature.title} thumbnail ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {currentImageIndex === idx && (
+                        <div className="absolute inset-0 bg-[#BF9B30]/20"></div>
+                      )}
+                    </button>
+                  )
                 ))}
               </div>
             </div>

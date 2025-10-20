@@ -45,10 +45,10 @@ export default function Contact() {
           {/* Location */}
           <div 
             onClick={handleLocationClick}
-            className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-6 text-center hover:border-[#BF9B30]/60 hover:scale-105 transition-all duration-300 cursor-pointer hover:shadow-xl hover:shadow-[#BF9B30]/20"
+            className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-6 text-center hover:border-[#BF9B30]/60 hover:scale-105 transition-all duration-200 cursor-pointer hover:shadow-xl hover:shadow-[#BF9B30]/20 will-change-transform"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] group-hover:bg-[#BF9B30] transition-all duration-300 mb-4">
-              <MapPin className="w-8 h-8 text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-300" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] group-hover:bg-[#BF9B30] transition-all duration-200 mb-4 will-change-[background-color]">
+              <MapPin className="w-8 h-8 text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-200" />
             </div>
             <h3 className="text-white font-bold mb-2 group-hover:text-[#BF9B30] transition-colors">Location</h3>
             <p className="text-[#D8C08E] text-sm leading-relaxed">A-Strip Building, V. Rama Avenue, Cebu City, Philippines</p>
@@ -61,10 +61,10 @@ export default function Contact() {
           {/* Phone */}
           <div 
             onClick={handlePhoneClick}
-            className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-6 text-center hover:border-[#BF9B30]/60 hover:scale-105 transition-all duration-300 cursor-pointer hover:shadow-xl hover:shadow-[#BF9B30]/20"
+            className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-6 text-center hover:border-[#BF9B30]/60 hover:scale-105 transition-all duration-200 cursor-pointer hover:shadow-xl hover:shadow-[#BF9B30]/20 will-change-transform"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] group-hover:bg-[#BF9B30] transition-all duration-300 mb-4">
-              <Phone className="w-8 h-8 text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-300" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] group-hover:bg-[#BF9B30] transition-all duration-200 mb-4 will-change-[background-color]">
+              <Phone className="w-8 h-8 text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-200" />
             </div>
             <h3 className="text-white font-bold mb-2 group-hover:text-[#BF9B30] transition-colors">Phone</h3>
             <p className="text-[#D8C08E] text-lg font-semibold">0917 777 3090</p>
@@ -77,10 +77,10 @@ export default function Contact() {
           {/* Email */}
           <div 
             onClick={handleEmailClick}
-            className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-6 text-center hover:border-[#BF9B30]/60 hover:scale-105 transition-all duration-300 cursor-pointer hover:shadow-xl hover:shadow-[#BF9B30]/20"
+            className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-6 text-center hover:border-[#BF9B30]/60 hover:scale-105 transition-all duration-200 cursor-pointer hover:shadow-xl hover:shadow-[#BF9B30]/20 will-change-transform"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] group-hover:bg-[#BF9B30] transition-all duration-300 mb-4">
-              <Mail className="w-8 h-8 text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-300" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] group-hover:bg-[#BF9B30] transition-all duration-200 mb-4 will-change-[background-color]">
+              <Mail className="w-8 h-8 text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-200" />
             </div>
             <h3 className="text-white font-bold mb-2 group-hover:text-[#BF9B30] transition-colors">Email</h3>
             <p className="text-[#D8C08E] text-sm">gritfitnesscebu@gmail.com</p>
@@ -91,9 +91,9 @@ export default function Contact() {
           </div>
 
           {/* Hours */}
-          <div className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-6 text-center hover:border-[#BF9B30]/60 hover:scale-105 transition-all duration-300">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] group-hover:bg-[#BF9B30] transition-all duration-300 mb-4">
-              <Clock className="w-8 h-8 text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-300" />
+          <div className="group bg-[#0A0A1F]/60 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-6 text-center hover:border-[#BF9B30]/60 hover:scale-105 transition-all duration-200 will-change-transform">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-[#BF9B30]/20 border border-[#BF9B30] group-hover:bg-[#BF9B30] transition-all duration-200 mb-4 will-change-[background-color]">
+              <Clock className="w-8 h-8 text-[#BF9B30] group-hover:text-[#0A0A1F] transition-colors duration-200" />
             </div>
             <h3 className="text-white font-bold mb-2 group-hover:text-[#BF9B30] transition-colors">Hours</h3>
             <p className="text-[#D8C08E] text-lg font-semibold">10AM - 10PM</p>

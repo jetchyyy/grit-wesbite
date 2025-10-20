@@ -1,5 +1,7 @@
 import { Award, Target, Heart, Zap } from 'lucide-react';
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback, memo, useEffect } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/config';
 import CoachModal from './CoachModal';
 import PaymentModal from './PaymentModal';
 
@@ -13,8 +15,15 @@ interface Coach {
 }
 
 // Memoized Coach Card component
-const CoachCard = memo(({ coach, idx, onClick }: { coach: Coach; idx: number; onClick: (coach: Coach) => void }) => {
+const CoachCard = memo(({ coach, onClick }: { coach: Coach; onClick: (coach: Coach) => void }) => {
   const Icon = coach.icon;
+  
+  // Strip HTML tags and get plain text
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
   
   return (
     <div
@@ -51,7 +60,7 @@ const CoachCard = memo(({ coach, idx, onClick }: { coach: Coach; idx: number; on
         </div>
 
         <p className="text-[#D8C08E] text-sm leading-relaxed">
-          {coach.description}
+          {stripHtml(coach.description).substring(0, 100)}...
         </p>
       </div>
 
@@ -65,6 +74,33 @@ export default function Coaches() {
   const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [coaches, setCoaches] = useState<Coach[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCoaches();
+  }, []);
+
+  const fetchCoaches = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, 'coaches'));
+      const coachesData = snapshot.docs.map(doc => {
+        const data = doc.data();
+        // Map icon or use default
+        const iconMap: any = { Award, Target, Heart, Zap };
+        return {
+          ...data,
+          icon: iconMap[data.iconName] || Award,
+        } as Coach;
+      });
+      setCoaches(coachesData);
+    } catch (error) {
+      console.error('Error fetching coaches:', error);
+      setCoaches([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCoachClick = useCallback((coach: Coach) => {
     setSelectedCoach(coach);
@@ -83,37 +119,6 @@ export default function Coaches() {
   const handleClosePaymentModal = useCallback(() => {
     setIsPaymentModalOpen(false);
   }, []);
-
-  const coaches: Coach[] = [
-    {
-      name: 'Coach 1',
-      specialty: 'Strength & Conditioning',
-      description: 'Certified strength coach with 8+ years experience. Specializes in functional training and athletic performance enhancement.',
-      image: 'https://images.unsplash.com/photo-1567013127542-490d757e51fc?q=80&w=400',
-      icon: Award
-    },
-    {
-      name: 'Coach 2',
-      specialty: 'HIIT & Cardio Expert',
-      description: 'High-energy trainer passionate about cardiovascular fitness and body transformation through intense interval training.',
-      image: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?q=80&w=400',
-      icon: Zap
-    },
-    {
-      name: 'Coach 3',
-      specialty: 'Core & Mobility',
-      description: 'Movement specialist focused on core strength, flexibility, and injury prevention. Helps clients build a solid foundation.',
-      image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=400',
-      icon: Target
-    },
-    {
-      name: 'Coach 4',
-      specialty: 'Dance & Wellness',
-      description: 'Combines dance fitness with holistic wellness approach. Creates fun, engaging workouts that improve both body and mind.',
-      image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=400',
-      icon: Heart
-    }
-  ];
 
   return (
     <section id="coaches" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#0A0A1F] via-[#0A0A1F] to-[#1A1A2F] relative overflow-hidden">
@@ -140,11 +145,22 @@ export default function Coaches() {
         </div>
 
         {/* Coaches Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {coaches.map((coach, idx) => (
-            <CoachCard key={idx} coach={coach} idx={idx} onClick={handleCoachClick} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#BF9B30]"></div>
+            <p className="text-[#D8C08E] mt-4">Loading coaches...</p>
+          </div>
+        ) : coaches.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-[#D8C08E] text-lg">No coaches available at the moment.</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {coaches.map((coach, idx) => (
+              <CoachCard key={idx} coach={coach} onClick={handleCoachClick} />
+            ))}
+          </div>
+        )}
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">

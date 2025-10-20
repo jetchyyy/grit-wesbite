@@ -1,8 +1,11 @@
 import { Check, Clock, Percent, Info } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PaymentModal from './PaymentModal';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/config';
 
 interface PricingPlan {
+  id?: string;
   name: string;
   price: number;
   period: string;
@@ -12,63 +15,95 @@ interface PricingPlan {
   highlighted: boolean;
   badge?: string;
   description: string;
+  order: number;
 }
 
 export default function Pricing() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [plans, setPlans] = useState<PricingPlan[]>([]);
 
-  const plans: PricingPlan[] = [
-    {
-      name: 'Walk-in',
-      price: 200,
-      period: '/day',
-      features: ['Daily gym access', 'All equipment available', 'Locker & shower facilities', 'Community support'],
-      highlighted: false,
-      description: 'Perfect for trying us out or occasional visits'
-    },
-    {
-      name: '1 Month',
-      price: 1800,
-      period: '/month',
-      features: ['Full gym access 10AM-10PM', 'Unlimited group classes', 'All equipment & facilities', 'Member community access', 'Progress tracking'],
-      highlighted: false,
-      description: 'Great starter package for building consistency'
-    },
-    {
-      name: '3 Months',
-      price: 4500,
-      period: '/3 months',
-      originalPrice: 5400,
-      savings: 'Save ₱900',
-      features: ['Everything in 1 Month', 'Priority class booking', 'Nutrition consultation', 'Fitness assessment', 'Member events access'],
-      highlighted: true,
-      badge: 'Most Popular',
-      description: 'Perfect for building lasting fitness habits'
-    },
-    {
-      name: '6 Months',
-      price: 7800,
-      period: '/6 months',
-      originalPrice: 10800,
-      savings: 'Save ₱3,000',
-      features: ['Everything in 3 Months', 'Personal training session', 'Custom workout plans', 'Body composition analysis', 'Premium member perks'],
-      highlighted: false,
-      description: 'Ideal for serious transformation goals'
-    },
-    {
-      name: '12 Months',
-      price: 14000,
-      period: '/year',
-      originalPrice: 21600,
-      savings: 'Save ₱7,600',
-      features: ['Everything included', 'Monthly personal training', 'Meal planning consultation', 'Priority equipment access', 'VIP member benefits', 'Guest passes (2/month)'],
-      highlighted: false,
-      badge: 'Best Value',
-      description: 'Ultimate package for committed fitness enthusiasts'
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  const fetchPlans = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'pricing'));
+      const plansData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as PricingPlan[];
+      
+      // Sort by order
+      plansData.sort((a, b) => a.order - b.order);
+      
+      // Use fetched data if available, otherwise use default plans
+      if (plansData.length > 0) {
+        setPlans(plansData);
+      } else {
+        // Default plans as fallback
+        setPlans([
+          {
+            name: 'Walk-in',
+            price: 200,
+            period: '/day',
+            features: ['Daily gym access', 'All equipment available', 'Locker & shower facilities', 'Community support'],
+            highlighted: false,
+            description: 'Perfect for trying us out or occasional visits',
+            order: 0
+          },
+          {
+            name: '1 Month',
+            price: 1800,
+            period: '/month',
+            features: ['Full gym access 10AM-10PM', 'Unlimited group classes', 'All equipment & facilities', 'Member community access', 'Progress tracking'],
+            highlighted: false,
+            description: 'Great starter package for building consistency',
+            order: 1
+          },
+          {
+            name: '3 Months',
+            price: 4500,
+            period: '/3 months',
+            originalPrice: 5400,
+            savings: 'Save ₱900',
+            features: ['Everything in 1 Month', 'Priority class booking', 'Nutrition consultation', 'Fitness assessment', 'Member events access'],
+            highlighted: true,
+            badge: 'Most Popular',
+            description: 'Perfect for building lasting fitness habits',
+            order: 2
+          },
+          {
+            name: '6 Months',
+            price: 7800,
+            period: '/6 months',
+            originalPrice: 10800,
+            savings: 'Save ₱3,000',
+            features: ['Everything in 3 Months', 'Personal training session', 'Custom workout plans', 'Body composition analysis', 'Premium member perks'],
+            highlighted: false,
+            description: 'Ideal for serious transformation goals',
+            order: 3
+          },
+          {
+            name: '12 Months',
+            price: 14000,
+            period: '/year',
+            originalPrice: 21600,
+            savings: 'Save ₱7,600',
+            features: ['Everything included', 'Monthly personal training', 'Meal planning consultation', 'Priority equipment access', 'VIP member benefits', 'Guest passes (2/month)'],
+            highlighted: false,
+            badge: 'Best Value',
+            description: 'Ultimate package for committed fitness enthusiasts',
+            order: 4
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching pricing plans:', error);
     }
-  ];
+  };
 
   const handleGetStarted = (plan: PricingPlan) => {
     setSelectedAmount(plan.price);
@@ -131,7 +166,9 @@ export default function Pricing() {
                 {/* Plan Header */}
                 <div className="text-center mb-6">
                   <h3 className="text-xl font-black text-white mb-2">{plan.name}</h3>
-                  <p className="text-[#D8C08E] text-sm mb-4">{plan.description}</p>
+                  <p className="text-[#D8C08E] text-sm mb-4">
+                    {plan.description.replace(/<[^>]*>/g, '')}
+                  </p>
                   
                   {/* Pricing */}
                   <div className="mb-4">

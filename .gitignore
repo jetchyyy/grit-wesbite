@@ -33,3 +33,12 @@ github
 .env.local
 .env.production
 .env.development
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebaserc
+
+# Service account keys (if you ever add them)
+*-firebase-adminsdk-*.json
+

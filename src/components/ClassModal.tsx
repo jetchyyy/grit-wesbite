@@ -12,6 +12,7 @@ interface ClassModalProps {
     image: string;
     icon: any;
     color: string;
+    description?: string;
     gallery?: string[];
   } | null;
 }
@@ -46,7 +47,20 @@ const ClassModal = memo(function ClassModal({ isOpen, onClose, classData }: Clas
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0A1F]/95 backdrop-blur-md">
-      <div className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto bg-[#0A0A1F]/95 backdrop-blur-xl border-2 border-[#BF9B30]/40 rounded-3xl shadow-2xl shadow-[#BF9B30]/20">
+      <div className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto bg-[#0A0A1F]/95 backdrop-blur-xl border-2 border-[#BF9B30]/40 rounded-3xl shadow-2xl shadow-[#BF9B30]/20
+        [&::-webkit-scrollbar]:w-3
+        [&::-webkit-scrollbar-track]:bg-[#0A0A1F]/50
+        [&::-webkit-scrollbar-track]:rounded-full
+        [&::-webkit-scrollbar-track]:border
+        [&::-webkit-scrollbar-track]:border-[#BF9B30]/20
+        [&::-webkit-scrollbar-thumb]:bg-gradient-to-b
+        [&::-webkit-scrollbar-thumb]:from-[#BF9B30]
+        [&::-webkit-scrollbar-thumb]:to-[#D8C08E]
+        [&::-webkit-scrollbar-thumb]:rounded-full
+        [&::-webkit-scrollbar-thumb]:border-2
+        [&::-webkit-scrollbar-thumb]:border-[#0A0A1F]
+        hover:[&::-webkit-scrollbar-thumb]:from-[#D8C08E]
+        hover:[&::-webkit-scrollbar-thumb]:to-[#BF9B30]">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -148,14 +162,39 @@ const ClassModal = memo(function ClassModal({ isOpen, onClose, classData }: Clas
 
             {/* Right Column - Description */}
             <div>
-              <h3 className="text-2xl font-black text-white mb-4">About This Class</h3>
+              <h3 className="text-2xl font-black text-white mb-4 flex items-center gap-2">
+                <div className="w-1 h-8 bg-[#BF9B30] rounded-full"></div>
+                About This Class
+              </h3>
               <div className="bg-[#0A0A1F]/60 backdrop-blur-sm border border-[#BF9B30]/30 rounded-xl p-6 space-y-4">
-                <p className="text-[#D8C08E] leading-relaxed">
-                  Join us for an energizing {classData.name} session that will push your limits and help you achieve your fitness goals.
-                </p>
-                <p className="text-[#D8C08E] leading-relaxed">
-                  Led by our expert instructor {classData.instructor}, this class combines high-energy movements with proper technique to maximize results while minimizing injury risk.
-                </p>
+                {classData.description ? (
+                  <div 
+                    className="text-[#D8C08E]/90 leading-[1.8] break-words overflow-wrap-anywhere
+                      prose prose-invert prose-lg
+                      prose-p:text-[#D8C08E] prose-p:leading-[1.8] prose-p:mb-4 prose-p:break-words
+                      prose-headings:text-white prose-headings:font-bold prose-headings:mb-3 prose-headings:break-words
+                      prose-h3:text-xl prose-h4:text-lg
+                      prose-strong:text-white prose-strong:font-semibold
+                      prose-em:text-[#D8C08E] prose-em:italic
+                      prose-ul:text-[#D8C08E] prose-ul:space-y-2 prose-ul:my-4 prose-ul:list-inside
+                      prose-ol:text-[#D8C08E] prose-ol:space-y-2 prose-ol:my-4 prose-ol:list-inside
+                      prose-li:text-[#D8C08E] prose-li:leading-relaxed prose-li:break-words
+                      prose-a:text-[#BF9B30] prose-a:underline prose-a:hover:text-[#D8C08E] prose-a:break-words
+                      prose-pre:overflow-x-auto prose-pre:break-words prose-pre:whitespace-pre-wrap
+                      prose-code:break-words prose-code:whitespace-normal
+                      max-w-none w-full overflow-hidden"
+                    dangerouslySetInnerHTML={{ __html: classData.description }}
+                  />
+                ) : (
+                  <>
+                    <p className="text-[#D8C08E] leading-relaxed">
+                      Join us for an energizing {classData.name} session that will push your limits and help you achieve your fitness goals.
+                    </p>
+                    <p className="text-[#D8C08E] leading-relaxed">
+                      Led by our expert instructor {classData.instructor}, this class combines high-energy movements with proper technique to maximize results while minimizing injury risk.
+                    </p>
+                  </>
+                )}
                 <div className="pt-4 border-t border-[#BF9B30]/20">
                   <h4 className="text-white font-bold mb-3">What to Bring:</h4>
                   <ul className="space-y-2 text-[#D8C08E]">
@@ -182,7 +221,8 @@ const ClassModal = memo(function ClassModal({ isOpen, onClose, classData }: Clas
 
           {/* Gallery Section */}
           <div>
-            <h3 className="text-3xl font-black text-white mb-6">
+            <h3 className="text-3xl font-black text-white mb-6 flex items-center gap-2">
+              <div className="w-1 h-10 bg-[#BF9B30] rounded-full"></div>
               Class <span className="text-[#BF9B30]">Gallery</span>
             </h3>
             <p className="text-[#D8C08E] mb-8">

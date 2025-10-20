@@ -1,10 +1,74 @@
 
 import { Quote, Star, Calendar, Trophy } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import PaymentModal from './PaymentModal';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  duration: string;
+  achievement: string;
+  text: string;
+  image: string;
+  rating: number;
+}
 
 export default function Testimonials() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const fetchTestimonials = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'testimonials'));
+      const testimonialsData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Testimonial[];
+      setTestimonials(testimonialsData);
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+      // Fallback to default testimonials if fetch fails
+      setTestimonials([
+        {
+          id: '1',
+          name: 'Jetch Mereald',
+          role: 'GRIT Member',
+          duration: '2 Years',
+          achievement: 'Lost 25kg',
+          text: 'GRIT completely transformed my fitness journey. The trainers are incredible and the community is so supportive! I never thought I could achieve this level of fitness.',
+          image: 'https://images.unsplash.com/photo-1494790108755-2616b612b647?q=80&w=150',
+          rating: 5
+        },
+        {
+          id: '2',
+          name: 'Dan Ken Shen Penera',
+          role: 'GRIT Member',
+          duration: '1.5 Years',
+          achievement: 'Gained 15kg Muscle',
+          text: 'Best gym in Cebu! The equipment is top-notch and the classes are always packed with energy and motivation. The community here feels like family.',
+          image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150',
+          rating: 5
+        },
+        {
+          id: '3',
+          name: 'Aliyah Galigao',
+          role: 'GRIT Member',
+          duration: '3 Years',
+          achievement: 'CrossFit Competitor',
+          text: 'I went from zero fitness to competing in a CrossFit competition. GRIT made it possible with their expert guidance and unwavering support throughout my journey.',
+          image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150',
+          rating: 5
+        }
+      ]);
+    }
+  };
   
   const handleOpenPaymentModal = useCallback(() => {
     setIsPaymentModalOpen(true);
@@ -13,36 +77,6 @@ export default function Testimonials() {
   const handleClosePaymentModal = useCallback(() => {
     setIsPaymentModalOpen(false);
   }, []);
-
-  const testimonials = [
-    {
-      name: 'Jetch Mereald',
-      role: 'GRIT Member',
-      duration: '2 Years',
-      achievement: 'Lost 25kg',
-      text: 'GRIT completely transformed my fitness journey. The trainers are incredible and the community is so supportive! I never thought I could achieve this level of fitness.',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b647?q=80&w=150',
-      rating: 5
-    },
-    {
-      name: 'Dan Ken Shen Penera',
-      role: 'GRIT Member',
-      duration: '1.5 Years',
-      achievement: 'Gained 15kg Muscle',
-      text: 'Best gym in Cebu! The equipment is top-notch and the classes are always packed with energy and motivation. The community here feels like family.',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150',
-      rating: 5
-    },
-    {
-      name: 'Aliyah Galigao',
-      role: 'GRIT Member',
-      duration: '3 Years',
-      achievement: 'CrossFit Competitor',
-      text: 'I went from zero fitness to competing in a CrossFit competition. GRIT made it possible with their expert guidance and unwavering support throughout my journey.',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150',
-      rating: 5
-    }
-  ];
 
   return (
     <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#1A1A2F] via-[#1A1A2F] to-[#0A0A1F] relative overflow-hidden">
@@ -86,9 +120,10 @@ export default function Testimonials() {
               </div>
 
               {/* Testimonial Text */}
-              <blockquote className="text-[#D8C08E] text-lg leading-relaxed mb-8 italic">
-                "{testimonial.text}"
-              </blockquote>
+              <div 
+                className="text-[#D8C08E] text-lg leading-relaxed mb-8 italic prose prose-invert prose-p:text-[#D8C08E] prose-headings:text-white prose-strong:text-white prose-em:italic max-w-none"
+                dangerouslySetInnerHTML={{ __html: `"${testimonial.text}"` }}
+              />
 
               {/* Member Info */}
               <div className="flex items-center gap-4">
