@@ -3,13 +3,13 @@ import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDXHyizosnRkV_6Xw3Ysh9MmyYA8X3R_-8",
-  authDomain: "grit-gym.firebaseapp.com",
-  projectId: "grit-gym",
-  storageBucket: "grit-gym.firebasestorage.app",
-  messagingSenderId: "46394863507",
-  appId: "1:46394863507:web:decbcaaf56e9effbaf0266",
-  measurementId: "G-M9EG6JE681"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
