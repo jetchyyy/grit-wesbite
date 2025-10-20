@@ -1,11 +1,20 @@
 
 
 import { ArrowRight } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import PaymentModal from './PaymentModal';
 
 export default function Hero() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  
+  const handleOpenPaymentModal = useCallback(() => {
+    setIsPaymentModalOpen(true);
+  }, []);
+
+  const handleClosePaymentModal = useCallback(() => {
+    setIsPaymentModalOpen(false);
+  }, []);
+
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
@@ -37,7 +46,7 @@ export default function Hero() {
             
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => setIsPaymentModalOpen(true)}
+                onClick={handleOpenPaymentModal}
                 className="group bg-[#BF9B30] text-[#0A0A1F] px-10 py-5 rounded-xl hover:bg-[#D8C08E] transition-all duration-300 font-bold text-lg flex items-center justify-center gap-3 shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50"
               >
                 Join NOW
@@ -131,7 +140,7 @@ export default function Hero() {
       {/* Payment Modal */}
       <PaymentModal
         isOpen={isPaymentModalOpen}
-        onClose={() => setIsPaymentModalOpen(false)}
+        onClose={handleClosePaymentModal}
       />
     </section>
   );

@@ -1,5 +1,5 @@
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 
 interface FeatureModalProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ interface FeatureModalProps {
   } | null;
 }
 
-export default function FeatureModal({ isOpen, onClose, feature }: FeatureModalProps) {
+const FeatureModal = memo(function FeatureModal({ isOpen, onClose, feature }: FeatureModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
@@ -193,4 +193,6 @@ export default function FeatureModal({ isOpen, onClose, feature }: FeatureModalP
       </div>
     </div>
   );
-}
+});
+
+export default FeatureModal;

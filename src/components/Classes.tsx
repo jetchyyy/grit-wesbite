@@ -1,15 +1,19 @@
 import { Music, Dumbbell, Heart, Flame, Calendar, User } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import ClassModal from './ClassModal';
 
 export default function Classes() {
   const [selectedClass, setSelectedClass] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleClassClick = (classData: any) => {
+  const handleClassClick = useCallback((classData: any) => {
     setSelectedClass(classData);
     setIsModalOpen(true);
-  };
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
 
   const classes = [
    
@@ -174,7 +178,7 @@ export default function Classes() {
       {/* Class Modal */}
       <ClassModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleCloseModal}
         classData={selectedClass}
       />
     </section>

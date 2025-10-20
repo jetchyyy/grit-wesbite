@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { X, Upload, AlertCircle, CheckCircle } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase/config';
@@ -19,7 +19,7 @@ interface MembershipPlan {
   features: string[];
 }
 
-export default function PaymentModal({
+const PaymentModal = memo(function PaymentModal({
   isOpen,
   onClose,
   prefilledAmount,
@@ -720,4 +720,6 @@ export default function PaymentModal({
       </div>
     </div>
   );
-}
+});
+
+export default PaymentModal;

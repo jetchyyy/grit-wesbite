@@ -1,5 +1,5 @@
 import { X, Calendar, Clock, User, Users, MapPin } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 
 interface ClassModalProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ interface ClassModalProps {
   } | null;
 }
 
-export default function ClassModal({ isOpen, onClose, classData }: ClassModalProps) {
+const ClassModal = memo(function ClassModal({ isOpen, onClose, classData }: ClassModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -222,4 +222,6 @@ export default function ClassModal({ isOpen, onClose, classData }: ClassModalPro
       </div>
     </div>
   );
-}
+});
+
+export default ClassModal;

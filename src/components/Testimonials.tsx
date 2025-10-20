@@ -1,10 +1,19 @@
 
 import { Quote, Star, Calendar, Trophy } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import PaymentModal from './PaymentModal';
 
 export default function Testimonials() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  
+  const handleOpenPaymentModal = useCallback(() => {
+    setIsPaymentModalOpen(true);
+  }, []);
+
+  const handleClosePaymentModal = useCallback(() => {
+    setIsPaymentModalOpen(false);
+  }, []);
+
   const testimonials = [
     {
       name: 'Jetch Mereald',
@@ -149,7 +158,7 @@ export default function Testimonials() {
             Ready to start your own transformation story?
           </p>
           <button
-            onClick={() => setIsPaymentModalOpen(true)}
+            onClick={handleOpenPaymentModal}
             className="bg-[#BF9B30] text-[#0A0A1F] px-10 py-4 rounded-xl hover:bg-[#D8C08E] transition-all duration-300 font-bold text-lg shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50 hover:-translate-y-1"
           >
             Join GRIT Today
@@ -159,7 +168,7 @@ export default function Testimonials() {
       {/* Payment Modal */}
       <PaymentModal
         isOpen={isPaymentModalOpen}
-        onClose={() => setIsPaymentModalOpen(false)}
+        onClose={handleClosePaymentModal}
       />
     </section>
   );

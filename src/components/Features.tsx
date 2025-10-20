@@ -1,15 +1,19 @@
 import { Zap, Users, Trophy, Heart } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import FeatureModal from './FeatureModal';
 
 export default function Features() {
   const [selectedFeature, setSelectedFeature] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleFeatureClick = (feature: any) => {
+  const handleFeatureClick = useCallback((feature: any) => {
     setSelectedFeature(feature);
     setIsModalOpen(true);
-  };
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
 
   const features = [
     {
@@ -178,7 +182,7 @@ export default function Features() {
       {/* Feature Modal */}
       <FeatureModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleCloseModal}
         feature={selectedFeature}
       />
     </section>

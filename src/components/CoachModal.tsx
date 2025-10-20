@@ -1,5 +1,5 @@
 import { X, Instagram, Award } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 
 interface CoachModalProps {
   isOpen: boolean;
@@ -14,7 +14,7 @@ interface CoachModalProps {
   } | null;
 }
 
-export default function CoachModal({ isOpen, onClose, onBookSession, coach }: CoachModalProps) {
+const CoachModal = memo(function CoachModal({ isOpen, onClose, onBookSession, coach }: CoachModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -155,4 +155,6 @@ export default function CoachModal({ isOpen, onClose, onBookSession, coach }: Co
       </div>
     </div>
   );
-}
+});
+
+export default CoachModal;
