@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 interface CoachModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onBookSession?: () => void;
   coach: {
     name: string;
     specialty: string;
@@ -13,7 +14,7 @@ interface CoachModalProps {
   } | null;
 }
 
-export default function CoachModal({ isOpen, onClose, coach }: CoachModalProps) {
+export default function CoachModal({ isOpen, onClose, onBookSession, coach }: CoachModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -39,7 +40,7 @@ export default function CoachModal({ isOpen, onClose, coach }: CoachModalProps) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0A1F]/95 backdrop-blur-md">
-      <div className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[#0A0A1F]/95 backdrop-blur-xl border-2 border-[#BF9B30]/40 rounded-3xl shadow-2xl shadow-[#BF9B30]/20">
+      <div className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[#0A0A1F]/95 backdrop-blur-xl border-2 border-[#BF9B30]/40 rounded-3xl shadow-2xl shadow-[#BF9B30]/20 scrollbar-thin scrollbar-thumb-[#BF9B30]/60 scrollbar-track-[#0A0A1F]/80">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -98,7 +99,15 @@ export default function CoachModal({ isOpen, onClose, coach }: CoachModalProps) 
                 </div>
               </div>
 
-              <button className="mt-8 bg-[#BF9B30] text-[#0A0A1F] px-8 py-4 rounded-xl hover:bg-[#D8C08E] transition-all duration-300 font-bold shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50 hover:-translate-y-1">
+              <button
+                onClick={() => {
+                  if (onBookSession) {
+                    onBookSession();
+                    onClose();
+                  }
+                }}
+                className="mt-8 bg-[#BF9B30] text-[#0A0A1F] px-8 py-4 rounded-xl hover:bg-[#D8C08E] transition-all duration-300 font-bold shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50 hover:-translate-y-1"
+              >
                 Book a Session with {coach.name}
               </button>
             </div>
@@ -143,9 +152,6 @@ export default function CoachModal({ isOpen, onClose, coach }: CoachModalProps) 
             </div>
           </div>
         </div>
-
-        {/* Bottom accent */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#BF9B30] to-transparent"></div>
       </div>
     </div>
   );

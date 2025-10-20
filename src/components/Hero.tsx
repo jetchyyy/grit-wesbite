@@ -1,7 +1,11 @@
 
-import { ArrowRight, Users } from 'lucide-react';
+
+import { ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import PaymentModal from './PaymentModal';
 
 export default function Hero() {
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
@@ -32,7 +36,10 @@ export default function Hero() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="group bg-[#BF9B30] text-[#0A0A1F] px-10 py-5 rounded-xl hover:bg-[#D8C08E] transition-all duration-300 font-bold text-lg flex items-center justify-center gap-3 shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50">
+              <button
+                onClick={() => setIsPaymentModalOpen(true)}
+                className="group bg-[#BF9B30] text-[#0A0A1F] px-10 py-5 rounded-xl hover:bg-[#D8C08E] transition-all duration-300 font-bold text-lg flex items-center justify-center gap-3 shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50"
+              >
                 Join NOW
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
               </button>
@@ -41,23 +48,42 @@ export default function Hero() {
         </div>
      
 
-      {/* Bottom Right - Feature Card & Stats */}
+      {/* Bottom Right - Testimonial & Stats */}
       <div className="hidden lg:block absolute bottom-16 right-8 xl:right-20 z-30">
         <div className="flex flex-col gap-6 max-w-md">
-          {/* Feature Card */}
+          {/* Testimonial Card */}
           <div className="bg-[#0A0A1F]/90 backdrop-blur-md border-2 border-[#BF9B30]/40 rounded-3xl p-8 hover:border-[#BF9B30]/60 transition-all duration-300 hover:shadow-xl hover:shadow-[#BF9B30]/20">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="bg-[#BF9B30] rounded-full p-3">
-                <Users className="w-8 h-8 text-[#0A0A1F]" />
+            {/* Quote Icon */}
+            <div className="flex justify-between items-start mb-4">
+              <svg className="w-8 h-8 text-[#BF9B30]/60" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+              </svg>
+              <div className="flex gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} className="w-4 h-4 text-[#BF9B30] fill-current" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
               </div>
             </div>
-            <p className="text-white text-base leading-relaxed mb-6 font-light">
-              It's about building strength, improving mobility, boosting mental health, and creating lasting habits that enhance your quality of life. Whether you're lifting weights, stretching your limits...
+            
+            {/* Testimonial Text */}
+            <p className="text-white text-base leading-relaxed mb-6 font-light italic">
+              "GRIT completely transformed my fitness journey. The trainers are incredible and the community is so supportive!"
             </p>
-            <button className="text-[#BF9B30] font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">
-              Learn More
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            
+            {/* Member Info */}
+            <div className="flex items-center gap-3">
+              <img 
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150" 
+                alt="Jetch Merald"
+                className="w-12 h-12 rounded-full object-cover border-2 border-[#BF9B30]/30"
+              />
+              <div>
+                <h4 className="text-white font-bold text-sm">Jetch Merald</h4>
+                <p className="text-[#BF9B30] text-xs font-medium">Lost 25kg • 2 Years</p>
+              </div>
+            </div>
           </div>
 
           {/* Stats Counter */}
@@ -102,6 +128,11 @@ export default function Hero() {
 
       {/* Bottom Gradient Fade */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0A0A1F] to-transparent z-20"></div>
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+      />
     </section>
   );
 }

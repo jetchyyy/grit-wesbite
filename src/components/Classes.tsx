@@ -168,13 +168,7 @@ export default function Classes() {
           })}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <p className="text-[#D8C08E] mb-6">Ready to join a class?</p>
-          <button className="bg-[#BF9B30] text-[#0A0A1F] px-10 py-4 rounded-lg hover:bg-[#D8C08E] transition-all duration-300 font-bold text-lg shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50 hover:-translate-y-1">
-            View Full Schedule
-          </button>
-        </div>
+        
       </div>
 
       {/* Class Modal */}

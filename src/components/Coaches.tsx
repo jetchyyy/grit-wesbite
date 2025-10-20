@@ -1,6 +1,7 @@
 import { Award, Target, Heart, Zap } from 'lucide-react';
 import { useState } from 'react';
 import CoachModal from './CoachModal';
+import PaymentModal from './PaymentModal';
 
 interface Coach {
   name: string;
@@ -14,6 +15,7 @@ interface Coach {
 export default function Coaches() {
   const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   const handleCoachClick = (coach: Coach) => {
     setSelectedCoach(coach);
@@ -135,7 +137,10 @@ export default function Coaches() {
           <p className="text-[#D8C08E] text-lg mb-6">
             Want to work with our expert coaches?
           </p>
-          <button className="bg-[#BF9B30] text-[#0A0A1F] px-10 py-4 rounded-xl hover:bg-[#D8C08E] transition-all duration-300 font-bold text-lg shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50 hover:-translate-y-1">
+          <button
+            onClick={() => setIsPaymentModalOpen(true)}
+            className="bg-[#BF9B30] text-[#0A0A1F] px-10 py-4 rounded-xl hover:bg-[#D8C08E] transition-all duration-300 font-bold text-lg shadow-lg shadow-[#BF9B30]/30 hover:shadow-xl hover:shadow-[#BF9B30]/50 hover:-translate-y-1"
+          >
             Join us now
           </button>
         </div>
@@ -145,7 +150,14 @@ export default function Coaches() {
       <CoachModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onBookSession={() => setIsPaymentModalOpen(true)}
         coach={selectedCoach}
+      />
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
       />
     </section>
   );
