@@ -1,26 +1,165 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../../firebase/config';
-import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
+import { LogIn, Mail, Lock, AlertCircle, Shield } from 'lucide-react';
+
+// Rate limiting configuration
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+const ATTEMPT_WINDOW = 5 * 60 * 1000; // 5 minutes
+
+interface LoginAttempt {
+  count: number;
+  firstAttempt: number;
+  lockedUntil?: number;
+}
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [lockoutTime, setLockoutTime] = useState(0);
+  const [remainingAttempts, setRemainingAttempts] = useState(MAX_ATTEMPTS);
   const navigate = useNavigate();
+
+  // Check if account is locked on mount
+  useEffect(() => {
+    checkLockoutStatus();
+    const interval = setInterval(checkLockoutStatus, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const getStorageKey = () => {
+    // Use IP-based key (in production, this would be server-side)
+    return 'login_attempts';
+  };
+
+  const checkLockoutStatus = () => {
+    const key = getStorageKey();
+    const stored = localStorage.getItem(key);
+    
+    if (stored) {
+      const attempts: LoginAttempt = JSON.parse(stored);
+      const now = Date.now();
+
+      if (attempts.lockedUntil && attempts.lockedUntil > now) {
+        setIsLocked(true);
+        setLockoutTime(Math.ceil((attempts.lockedUntil - now) / 1000));
+        return;
+      } else if (attempts.lockedUntil && attempts.lockedUntil <= now) {
+        // Lockout expired, reset
+        localStorage.removeItem(key);
+        setIsLocked(false);
+        setRemainingAttempts(MAX_ATTEMPTS);
+      } else if (now - attempts.firstAttempt > ATTEMPT_WINDOW) {
+        // Attempt window expired, reset
+        localStorage.removeItem(key);
+        setRemainingAttempts(MAX_ATTEMPTS);
+      } else {
+        setRemainingAttempts(MAX_ATTEMPTS - attempts.count);
+      }
+    } else {
+      setIsLocked(false);
+      setRemainingAttempts(MAX_ATTEMPTS);
+    }
+  };
+
+  const recordFailedAttempt = () => {
+    const key = getStorageKey();
+    const stored = localStorage.getItem(key);
+    const now = Date.now();
+
+    let attempts: LoginAttempt;
+
+    if (stored) {
+      attempts = JSON.parse(stored);
+      
+      // Reset if outside window
+      if (now - attempts.firstAttempt > ATTEMPT_WINDOW) {
+        attempts = { count: 1, firstAttempt: now };
+      } else {
+        attempts.count += 1;
+      }
+    } else {
+      attempts = { count: 1, firstAttempt: now };
+    }
+
+    // Lock account if max attempts reached
+    if (attempts.count >= MAX_ATTEMPTS) {
+      attempts.lockedUntil = now + LOCKOUT_DURATION;
+      setIsLocked(true);
+      setLockoutTime(Math.ceil(LOCKOUT_DURATION / 1000));
+      setError(`Too many failed attempts. Account locked for ${Math.ceil(LOCKOUT_DURATION / 60000)} minutes.`);
+    } else {
+      setRemainingAttempts(MAX_ATTEMPTS - attempts.count);
+    }
+
+    localStorage.setItem(key, JSON.stringify(attempts));
+  };
+
+  const resetAttempts = () => {
+    const key = getStorageKey();
+    localStorage.removeItem(key);
+    setRemainingAttempts(MAX_ATTEMPTS);
+  };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Check if account is locked
+    if (isLocked) {
+      setError(`Account temporarily locked. Try again in ${Math.floor(lockoutTime / 60)} minutes ${lockoutTime % 60} seconds.`);
+      return;
+    }
+
+    // Basic input validation
+    if (!email || !password) {
+      setError('Please enter both email and password.');
+      return;
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    // Password minimum length
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+
     setLoading(true);
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      resetAttempts(); // Clear failed attempts on success
       navigate('/admin');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in. Please check your credentials.');
+      recordFailedAttempt();
+      
+      // User-friendly error messages
+      let errorMessage = 'Failed to sign in. Please check your credentials.';
+      
+      if (err.code === 'auth/user-not-found') {
+        errorMessage = 'No account found with this email address.';
+      } else if (err.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password. Please try again.';
+      } else if (err.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address format.';
+      } else if (err.code === 'auth/user-disabled') {
+        errorMessage = 'This account has been disabled.';
+      } else if (err.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many failed attempts. Please try again later.';
+      }
+      
+      setError(`${errorMessage} (${remainingAttempts - 1} attempts remaining)`);
     } finally {
       setLoading(false);
     }
@@ -28,14 +167,37 @@ export default function Login() {
 
   const handleGoogleLogin = async () => {
     setError('');
+
+    // Check if account is locked
+    if (isLocked) {
+      setError(`Account temporarily locked. Try again in ${Math.floor(lockoutTime / 60)} minutes ${lockoutTime % 60} seconds.`);
+      return;
+    }
+
     setLoading(true);
 
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
+      resetAttempts(); // Clear failed attempts on success
       navigate('/admin');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google.');
+      // Don't count Google auth popup cancellation as failed attempt
+      if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+        recordFailedAttempt();
+      }
+      
+      let errorMessage = 'Failed to sign in with Google.';
+      
+      if (err.code === 'auth/popup-blocked') {
+        errorMessage = 'Popup blocked. Please allow popups for this site.';
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        errorMessage = 'Sign in cancelled.';
+      } else if (err.code === 'auth/account-exists-with-different-credential') {
+        errorMessage = 'An account already exists with this email using a different sign-in method.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -63,7 +225,32 @@ export default function Login() {
 
         {/* Login Form */}
         <div className="bg-[#0A0A1F]/80 backdrop-blur-xl border border-[#BF9B30]/30 rounded-2xl p-8 shadow-2xl">
-          {error && (
+          {/* Security Status */}
+          {!isLocked && remainingAttempts < MAX_ATTEMPTS && (
+            <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/50 rounded-xl flex items-start gap-3">
+              <Shield className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+              <p className="text-yellow-400 text-sm">
+                <strong>Security Alert:</strong> {remainingAttempts} login attempts remaining before temporary lockout.
+              </p>
+            </div>
+          )}
+
+          {/* Lockout Warning */}
+          {isLocked && (
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-xl flex items-start gap-3">
+              <Shield className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="text-red-400 text-sm">
+                <p className="font-bold mb-1">Account Temporarily Locked</p>
+                <p>Too many failed login attempts. Please try again in:</p>
+                <p className="text-lg font-mono mt-2">
+                  {Math.floor(lockoutTime / 60)}:{(lockoutTime % 60).toString().padStart(2, '0')}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Error Messages */}
+          {error && !isLocked && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-xl flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
               <p className="text-red-400 text-sm">{error}</p>
@@ -112,10 +299,10 @@ export default function Login() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || isLocked}
               className="w-full bg-[#BF9B30] text-[#0A0A1F] py-3 rounded-xl font-bold text-lg hover:bg-[#D8C08E] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#BF9B30]/30"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Signing in...' : isLocked ? 'Account Locked' : 'Sign In'}
             </button>
           </form>
 
@@ -132,7 +319,7 @@ export default function Login() {
           {/* Google Sign In */}
           <button
             onClick={handleGoogleLogin}
-            disabled={loading}
+            disabled={loading || isLocked}
             className="w-full bg-white text-gray-900 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">

@@ -34,11 +34,17 @@ github
 .env.production
 .env.development
 
-# Firebase
+# Firebase CLI cache and debug logs
 .firebase/
 firebase-debug.log
-firebaserc
+*-debug.log
+ui-debug.log
+firestore-debug.log
 
 # Service account keys (if you ever add them)
 *-firebase-adminsdk-*.json
+*-service-account-*.json
+
+# Firebase emulator data (if you use emulators)
+.firebase/emulators/
 
