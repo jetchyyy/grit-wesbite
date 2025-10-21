@@ -20,7 +20,7 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
   }
 
   if (!user || !isAdmin) {
-    return <Navigate to="/admincms/login" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
 
   return <>{children}</>;
